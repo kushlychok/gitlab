@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:10
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: adminpg
+      POSTGRES_PASSWORD: PgAdmin2019
+      POSTGRES_DB: gitlab
+
+    ports:
+      - '5432:5432'
+  
+    networks:
+      - backend
+
+
+  web:
+    depends_on:
+      - db
+    image: 'gitlab/gitlab-ce:latest'
+#  restart: always
+    hostname: 'gitlab.opsworks.io'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        letsencrypt['enable'] = true
+        letsencrypt['contact_emails'] = ['kushlychok@gmail.com'] 
+        external_url 'https://gitlab.kushlychok.pp.ua'
+        gitlab_rails['registry_enabled'] = false
+        gitlab_rails['time_zone'] = 'Europe/Kiev'
+        gitlab_rails['lfs_enabled'] = true
+        gitlab_rails['initial_root_password'] = 'SAsa45632125!2018'
+        gitlab_rails['gitlab_signup_enabled'] = false
+
+        #gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'saml'
+        gitlab_rails['omniauth_providers'] = [
+          {
+            # G-Suite
+            'name': 'saml',
+            'args': {
+                    'assertion_consumer_service_url': 'https://gitlab.opsworks.io/users/auth/saml/callback',
+                    'idp_cert_fingerprint': '0B:87:92:1C:9A:5F:49:AF:1E:45:59:1F:3E:B9:68:9D:BF:AB:D8:03',
+                    'idp_sso_target_url': 'https://accounts.google.com/o/saml2/idp?idpid=C00zo24ec',
+                    'issuer': 'https://gitlab.opsworks.io',
+                    'name_identifier_format': 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+                    'attribute_statements': { 'email': ['emailAddress'] }
+                    #'name_identifier_format': 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+                   },
+            'label': 'G Suite'
+          }
+        ]
+        # Disable the built-in Postgres
+         postgresql['enable'] = false
+         # Recommend value is 1/4 of total RAM, up to 14GB.
+         postgresql['shared_buffers'] = '1GB'
+
+         # PostgreSQl database configuration
+         gitlab_rails['db_adapter'] = 'postgresql'
+         gitlab_rails['db_encoding'] = 'utf8'
+         gitlab_rails['db_host'] = 'db'
+         gitlab_rails['db_port'] = 5432
+         gitlab_rails['db_database'] = 'gitlab'
+         gitlab_rails['db_username'] = 'adminpg'
+         gitlab_rails['db_password'] = 'PgAdmin2019'
+
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2222:22'
+
+    volumes:
+      - './config:/etc/gitlab'
+      - './logs:/var/log/gitlab'
+      - './data:/var/opt/gitlab'
+
+    networks:
+      - backend
+
+volumes:
+  config:
+  logs:
+  data:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge
