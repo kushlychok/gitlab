@@ -11,4 +11,4 @@ sudo cp -R gitlab /root/backup/`date +'%d_%m_%Y'`
 cd /root/backup
 tar cvfz `date +'%d_%m_%Y'`.tar.gz `date +'%d_%m_%Y'`
 rm -rf `date +'%d_%m_%Y'`
-aws s3 mv `date +'%d_%m_%Y' s3://backupgitlab-opsworks/
+aws s3 mv `date +'%d_%m_%Y'`.tar.gz s3://backupgitlab-opsworks/
