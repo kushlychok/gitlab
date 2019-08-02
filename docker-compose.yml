@@ -8,7 +8,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: adminpg
-      POSTGRES_PASSWORD: PgAdmin2019
+      POSTGRES_PASSWORD: '${POSTGRES_PAS}'
       POSTGRES_DB: gitlab
 
     ports:
@@ -21,8 +21,8 @@ services:
   web:
     depends_on:
       - db
-    image: 'gitlab/gitlab-ce:latest'
-#  restart: always
+    image: 'gitlab/gitlab-ce:12.1.3-ce.0'
+    restart: always
     hostname: 'gitlab.opsworks.io'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -32,7 +32,7 @@ services:
         gitlab_rails['registry_enabled'] = false
         gitlab_rails['time_zone'] = 'Europe/Kiev'
         gitlab_rails['lfs_enabled'] = true
-        gitlab_rails['initial_root_password'] = 'SAsa45632125!2018'
+        gitlab_rails['initial_root_password'] = '${rails}'
         gitlab_rails['gitlab_signup_enabled'] = false
 
         #gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'saml'
@@ -64,7 +64,7 @@ services:
          gitlab_rails['db_port'] = 5432
          gitlab_rails['db_database'] = 'gitlab'
          gitlab_rails['db_username'] = 'adminpg'
-         gitlab_rails['db_password'] = 'PgAdmin2019'
+         gitlab_rails['db_password'] = '${POSTGRES_PAS}'
 
     ports:
       - '80:80'
