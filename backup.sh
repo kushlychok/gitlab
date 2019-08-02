@@ -1,5 +1,5 @@
 #!/bin/bash
-export PGPASSWORD="PgAdmin2019"
+export PGPASSWORD=`aws ssm get-parameters --name rails --region us-west-2 --with-decryption --output text --query Parameters[].Value`
 
 mkdir /root/backup/`date +'%d_%m_%Y'`
 
