@@ -8,7 +8,7 @@ failfunction()
     fi
 }
 
-export PGPASSWORD=`aws ssm get-parameters --name DBpassPG --region us-west-2 --with-decryption --output text --query Parameters[].Value`
+export PGPASSWORD=`aws ssm get-parameters --name POSTGRES_PAS --region us-west-2 --with-decryption --output text --query Parameters[].Value`
 mkdir /root/backup/`date +'%d_%m_%Y'`
 
 cd /root/backup/`date +'%d_%m_%Y'`
