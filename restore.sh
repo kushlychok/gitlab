@@ -1,6 +1,6 @@
 #!/bin/bash
 #to run this script you need to know the date for example 05_08_2019 to run it: ./restore.sh 05_08_2019
-export PGPASSWORD=`aws ssm get-parameters --name DBpassPG --region us-west-2 --with-decryption --output text --query Parameters[].Value`
+export PGPASSWORD=`aws ssm get-parameters --name POSTGRES_PAS --region us-west-2 --with-decryption --output text --query Parameters[].Value`
 file=$1
 echo $1
 cd /root/backup
